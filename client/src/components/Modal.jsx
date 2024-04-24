@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import "./Modal.css";
 const Modal = ({ setModalOpen, contract }) => {
   const sharing = async () => {
-    const address = document.querySelector(".addressinput").value;
+    const address = document.querySelector(".address").value;
     await contract.allow(address);
     setModalOpen(false);
   };
@@ -30,9 +30,14 @@ const Modal = ({ setModalOpen, contract }) => {
           <div className="body">
             <input
               type="text"
-              className="addressinput"
+              className="address"
               placeholder="Enter Address"
             ></input>
+            <form id="myForm">
+              <select id="selectNumber">
+                <option className="address">People With Access</option>
+              </select>
+            </form>
           </div>
 
           <div className="footer">
