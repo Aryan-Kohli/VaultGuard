@@ -1,13 +1,24 @@
 # Sample Hardhat Project
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a Hardhat Ignition module that deploys that contract.
-
-Try running some of the following tasks:
+STEP 1: for starting hardhat backend
 
 ```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
 npx hardhat node
-npx hardhat ignition deploy ./ignition/modules/Lock.js
+```
+
+STEP 2:
+for deploying hardhat project (int the root dir)
+
+```shell
+npx hardhat run --network localhost scripts/deploy.js
+```
+
+NOTE: At app.jsx at line 32 change the contrcat address everytime you open a terminal
+
+STEP 3:
+for running frontend
+
+```shell
+cd client
+npm run dev
 ```
