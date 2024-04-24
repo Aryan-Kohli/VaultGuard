@@ -43,7 +43,7 @@ export default function FileUpload({ account, contract, provider }) {
   function retreiveFile(e) {
     setFile(e.target.files[0]);
     setFileName(e.target.files[0].name);
-    console.log(e.target.files[0].name);
+    console.log(e.target.files[0]);
     e.preventDefault();
   }
   return (
