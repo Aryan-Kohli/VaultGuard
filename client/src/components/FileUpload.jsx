@@ -31,8 +31,15 @@ export default function FileUpload({ account, contract, provider }) {
       );
       const resData = await res.json();
       console.log(resData);
+      const timestamp = Date.now();
+      const dateObject = new Date(timestamp);
+      const humanReadableDate = dateObject.toLocaleString();
       // const ImgHash = `https://gateway.pinata.cloud/ipfs/${resData.IpfsHash}`;
-      contract.add(account, resData.IpfsHash, fileName);
+      // contract.add(account, resData.IpfsHash, fileName);
+      var string =" Uploaded " + fileName + " at " + humanReadableDate;
+      contract.AddFile(resData.IpfsHash, fileName,humanReadableDate,"128kb", string);
+      console.log(string);
+
       alert("Successfully Image Uploaded");
       setFileName("No image selected");
       setFile(null);

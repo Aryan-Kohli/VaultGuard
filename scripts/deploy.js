@@ -2,7 +2,7 @@ const hre = require("hardhat");
 
 async function main()
 {
-    const Upload = await hre.ethers.deployContract("Upload");
+    const Upload = await hre.ethers.deployContract("Upload2");
     await Upload.waitForDeployment();
 
     console.log("Upload deployed to:", Upload.target);

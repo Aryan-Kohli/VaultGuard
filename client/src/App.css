@@ -153,6 +153,7 @@ a{
 
 .dataDiv{
     display: flex;
-    gap:40px;
+    flex-direction: column;
+    gap:10px;
     
 }

@@ -1,4 +1,4 @@
-import Upload from "./artifacts/contracts/Upload.sol/Upload.json";
+import Upload2 from "./artifacts/contracts/Upload2.sol/Upload2.json";
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import FileUpload from "./components/FileUpload";
@@ -33,7 +33,7 @@ function App() {
 
         const contract = new ethers.Contract(
           contractAddress,
-          Upload.abi,
+          Upload2.abi,
           signer
         );
         console.log(contract);
