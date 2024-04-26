@@ -1,0 +1,38 @@
+
+.file {
+    display: flex;
+    justify-content: space-evenly;
+    gap: 130px;
+    align-items: center;
+    border: 2px solid white;
+    margin-top: 10px;
+    padding: 5px 80px;
+}
+.icons {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+.btn {
+    margin-top: 5px;
+    background-color: #ffdfa2;
+    color: #0f0f15;
+    font-family: "Quicksand", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.btn_small {
+    background-color: #98FB98;
+    color: #006400;
+    font-family: "Quicksand", sans-serif;
+    border-radius: 5px;
+    border: none;
+    padding: 5px;
+    font-weight: 500;
+}
