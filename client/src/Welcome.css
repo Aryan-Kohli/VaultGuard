@@ -1,0 +1,390 @@
+* {
+    background-color: black;
+    scroll-behavior: smooth;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.wp .header .logo {
+    color: white;
+    font-size: large;
+    display: flex;
+    gap: 15px;
+    margin: 30px 15px;
+}
+
+.wp .header .logo:hover {
+    cursor: pointer;
+}
+
+.wp .header img {
+    width: 100px;
+    height: 100px;
+}
+
+.wp .header img:hover {
+    cursor: pointer;
+}
+
+.wp .header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.wp .butd .but {
+    color: white;
+    padding: 10px 30px;
+    background-color: blue;
+    border-radius: 20px;
+    border: none;
+    margin-top: 60px;
+    margin-left: 280px;
+    margin-right: 20px;
+}
+
+.wp .butd .but:hover {
+    color: white;
+    cursor: pointer;
+    padding: 10px 30px;
+    background-color: rgb(0, 0, 120);
+    border-radius: 20px;
+    border: none;
+}
+
+.wp .nav {
+    color: white;
+    display: flex;
+    gap: 50px;
+    margin-left: 100px;
+    margin-top: 55px;
+}
+
+.wp .nav p:hover {
+    cursor: pointer;
+    color: rgb(98, 98, 217);
+}
+
+.wp .section {
+    margin: 20px;
+    margin-left: 130px;
+    /* text-align: center; */
+}
+
+.wp .blu {
+    color: rgb(65, 65, 208);
+}
+
+.wp .section {
+    color: white;
+    font-size: 28px;
+    line-height: 1em;
+    display: flex;
+    gap: 120px;
+    margin-bottom: 185px;
+}
+
+.wp .section p {
+    color: white;
+    font-size: 23px;
+    line-height: 1.5;
+}
+
+.wp .bt {
+    color: rgb(65, 65, 208);
+    font-weight: bold;
+}
+
+.wp .folder img {
+    width: 300px;
+    height: 300px;
+    padding-top: 30px;
+}
+
+.wp .about {
+    margin-left: 125px;
+    line-height: 0.7em;
+    font-size: 30px;
+}
+
+.wp .wit {
+    color: white;
+}
+
+.wp .team {
+    margin-left: 100px;
+    padding-top: 25px;
+    height: 280px;
+    width: 1100px;
+}
+
+.wp .mid {
+    margin-bottom: 185px;
+}
+
+.wp .mid .main .heading {
+    color: rgb(65, 65, 208);
+    margin-left: 130px;
+    line-height: 0.2em;
+    font-size: 47px;
+
+}
+
+.wp .mid .main .heading-1 {
+    color: white;
+    margin-left: 130px;
+    font-size: 46px;
+
+}
+
+.wp .mid .main .box1 {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+}
+
+.wp .mid .main .text {
+    color: white;
+    margin-left: 128px;
+    font-size: 20px;
+}
+
+.wp .mid .main .img1 {
+    margin-top: 11%;
+    height: 30px;
+    width: 30px;
+}
+
+.wp .mid .main .t1 {
+    color: #0045F6;
+    font-weight: 800;
+}
+
+.wp .mid .box2 {
+    color: white;
+    justify-content: center;
+}
+
+.wp .mid .box2 .insidebox21 {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 4%;
+    margin-left: -120px;
+
+}
+
+.wp .mid .box2 .img2 {
+    height: 150px;
+    border: 4px solid rgb(120, 147, 236);
+    width: 450px;
+    margin-left: 70px;
+    border-radius: 5px;
+
+}
+
+.wp .mid .box2 .text21 {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
+.wp .mid .box2 h1 {
+    margin-top: 2%;
+    color: rgb(65, 65, 208);
+}
+
+.wp .mid .box2 h4 {
+    margin-top: 5%;
+    color: white;
+}
+
+.wp .mid .box2 .text22 {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
+.wp .mid .box2 .insidebox22 {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 5%;
+    margin-left: 25px;
+
+}
+
+.wp .mid .main .box2 h1:hover {
+    cursor: pointer;
+}
+
+.wp .mid .box2 .img3 {
+    height: 150px;
+    border: 4px solid rgb(120, 147, 236);
+    width: 450px;
+    margin-left: 230px;
+    border-radius: 5px;
+}
+
+.wp .mid .box2 .text23 {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
+.wp .mid .box2 .insidebox23 {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 5%;
+    margin-left: 150px;
+}
+
+.wp .mid .box2 .img4 {
+    height: 150px;
+    border: 4px solid rgb(120, 147, 236);
+    width: 450px;
+    margin-left: 240px;
+    border-radius: 5px;
+}
+
+/* Google font */
+.wp .mid .main .g {
+    color: #4285F4;
+}
+
+.wp .mid .main .o1 {
+    color: #DB4437;
+}
+
+.wp .mid .main .o2 {
+    color: #F4B400;
+}
+
+.wp .mid .main .g1 {
+    color: #4285F4;
+}
+
+.wp .mid .main .l {
+    color: #0F9D58;
+}
+
+.wp .mid .main .e {
+    color: #DB4437;
+}
+
+.wp .an {
+    text-decoration: none;
+    color: #0045F6;
+}
+
+.wp .an:hover {
+    text-decoration: underline;
+    color: rgb(228, 228, 180);
+}
+
+/* Subs */
+.wp .wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+.wp .wrapper .card {
+    width: 300px;
+    height: 500px;
+    /* background-color: white; */
+    padding: 40px;
+    border: 2px solid rgb(56, 29, 177);
+    margin: 30px 15px;
+    border-radius: 10px;
+    box-shadow: 10px 10px 10px -1px rgba(10, 99, 169, 0.16),
+        3px 3px 10px -1px rgba(255, 255, 255, 0.865);
+}
+
+.wp .wrapper .card h3 {
+    margin-bottom: 15px;
+    font-size: 30px;
+}
+
+.wp .wrapper .card h1 {
+    margin-bottom: 10px;
+    color: rgb(65, 65, 208);
+}
+
+.wp .wrapper .card h1 span {
+    font-size: 12px;
+    color: rgba(232, 223, 223, 0.922);
+}
+
+.wp .wrapper .card p {
+    margin: 20px 0;
+    color: rgb(255, 255, 255);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.wp .wrapper .card ul {
+    list-style: none;
+}
+
+.wp .wrapper .card ul li {
+    line-height: 3;
+    color: rgb(255, 255, 255);
+}
+
+.wp .wrapper .card ul li i {
+    color: rgba(179, 170, 170, 0.4);
+    margin-right: 10px;
+    text-align: left;
+}
+
+.wp .wrapper .card .sub2 {
+    margin: 20px 0;
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    border: 1px solid #5f30e2;
+    color: #5f30e2;
+    padding: 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: 0.4s;
+}
+
+.wp .wrapper .card .sub1 {
+    margin-top: 67px;
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    border: 1px solid #5f30e2;
+    color: #5f30e2;
+    padding: 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: 0.4s;
+}
+
+.wp .wrapper .card a:hover {
+    background-color: #5f30e2;
+    color: white;
+}
+
+.wp .sub {
+    margin-bottom: 180px;
+}
+
+.wp .sub .subblu {
+    color: rgb(65, 65, 208);
+    line-height: 0.2em;
+    margin-left: 130px;
+    font-size: 45px;
+}
+
+.wp .sub .subwh {
+    color: white;
+    font-size: 45px;
+    margin-left: 130px;
+}

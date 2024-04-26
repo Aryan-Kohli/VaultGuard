@@ -4,7 +4,7 @@ import "./Display.css";
 import { MdDocumentScanner } from "react-icons/md";
 import Modal from "react-modal";
 
-export default function Display({ account, contract }) {
+export default function Display({ account, myaddress, contract }) {
   const [data, setData] = useState([]);
   const [transactData, setTransactData] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(true);
@@ -49,14 +49,19 @@ export default function Display({ account, contract }) {
     Setdataitem(data);
     console.log(data);
   }
- async function handleRemoveAccess(addressaccess, data) {
+  async function handleRemoveAccess(addressaccess, data) {
     console.log("address is ", addressaccess);
     console.log(data);
     // myFunc(addressaccess);
     if (data && addressaccess) {
       try {
         console.log("done", data);
-        await contract.removeAccess(data.url, addressaccess, data.name + " removed access for " + addressaccess, humanReadableDate);
+        await contract.removeAccess(
+          data.url,
+          addressaccess,
+          data.name + " removed access for " + addressaccess,
+          humanReadableDate
+        );
         console.log(addressaccess);
       } catch (error) {
         console.error("Error calling contract.giveAccess:", error);
@@ -108,8 +113,9 @@ export default function Display({ account, contract }) {
 
   const myFunc2 = (address) => {
     console.log(address);
+    setAccessList([]);
     handleRemoveAccess(address, dataItem);
-  }
+  };
 
   async function getTransaction() {
     let transaction = await contract.getTransactions();
@@ -125,62 +131,111 @@ export default function Display({ account, contract }) {
     });
     setTransactData(transact);
   }
-  
 
   async function getdata() {
     let dataArray;
     const otherAddress = document.getElementsByName("addresses")[0].value;
     if (otherAddress) {
+      let s1 = myaddress + " have acessed file at " + humanReadableDate;
       dataArray = await contract.sharedFiles(otherAddress);
+      console.log(dataArray);
+      const isEmpty = Object.keys(dataArray).length === 0;
+      if (isEmpty) {
+      } else {
+        const imgs = dataArray.map((data, index) => {
+          return (
+            <div key={index} className="file">
+              <p>{data.name}</p>
+              <p>{data.size}</p>
+              <p>{data.timeStamp}</p>
+              <MdDocumentScanner
+                className="icons"
+                onClick={() => {
+                  window.open(
+                    `https://gateway.pinata.cloud/ipfs/${data.url}`,
+                    "_blank"
+                  );
+                }}
+              />
+              {/* <div>
+                <button
+                  className="btn_small1"
+                  // onClick={() => console.log(addressaccess)}
+                  onClick={() => giveacces(data, addressaccess)}
+                >
+                  Give Access
+                </button>
+              </div>
+              <button
+                className="btn_small1"
+                onClick={() => removeAccess(data, addressaccess)}
+              >
+                Remove Access
+              </button>
+              <button
+                className="btn_small1"
+                onClick={() => handleaccessList(data.url)}
+              >
+                GetAccessList
+              </button> */}
+            </div>
+          );
+        });
+        setData(imgs);
+      }
       console.log(dataArray);
     } else {
       dataArray = await contract.getMyFiles();
       console.log(dataArray);
-    }
-
-    const isEmpty = Object.keys(dataArray).length === 0;
-    if (isEmpty) {
-    } else {
-      const imgs = dataArray.map((data, index) => {
-        return (
-          <div key={index} className="file">
-            <p>{data.name}</p>
-            <p>{data.size}</p>
-            <p>{data.timeStamp}</p>
-            <MdDocumentScanner
-              className="icons"
-              onClick={() => {
-                window.open(
-                  `https://gateway.pinata.cloud/ipfs/${data.url}`,
-                  "_blank"
-                );
-              }}
-            />
-            <div>
+      const isEmpty = Object.keys(dataArray).length === 0;
+      if (isEmpty) {
+      } else {
+        const imgs = dataArray.map((data, index) => {
+          return (
+            <div key={index} className="file">
+              <p>{data.name}</p>
+              <p>{data.size}</p>
+              <p>{data.timeStamp}</p>
+              <MdDocumentScanner
+                className="icons"
+                onClick={() => {
+                  window.open(
+                    `https://gateway.pinata.cloud/ipfs/${data.url}`,
+                    "_blank"
+                  );
+                }}
+              />
+              <div>
+                <button
+                  className="btn_small1"
+                  // onClick={() => console.log(addressaccess)}
+                  onClick={() => giveacces(data, addressaccess)}
+                >
+                  Give Access
+                </button>
+              </div>
               <button
-                className="btn_small"
-                // onClick={() => console.log(addressaccess)}
-                onClick={() => giveacces(data, addressaccess)}
+                className="btn_small1"
+                onClick={() => removeAccess(data, addressaccess)}
               >
-                Give Access
+                Remove Access
+              </button>
+              <button
+                className="btn_small1"
+                onClick={() => handleaccessList(data.url)}
+              >
+                GetAccessList
               </button>
             </div>
-            <button className="btn_small" onClick={() => removeAccess(data, addressaccess)}>Remove Access</button>
-            <button
-              className="btn_small"
-              onClick={() => handleaccessList(data.url)}
-            >
-              GetAccessList
-            </button>
-          </div>
-        );
-      });
-      setData(imgs);
+          );
+        });
+        setData(imgs);
+      }
     }
   }
   return (
     <div className="displayImgdiv">
-      <h1>IMAGES DATA</h1>
+      {/* <h1>IMAGES DATA</h1> */}
       <input
         name="addresses"
         className="addressinput"
@@ -203,13 +258,16 @@ export default function Display({ account, contract }) {
           setAddressAccess(e.target.value);
           console.log(addressaccess);
         }}
-        placeholder="Enter address to give access"
+        placeholder="Give / Remove Access"
       />
       <button className="btn_small" onClick={() => myFunc(addressaccess)}>
-        Confirm Address
+        Confirm GIVE Access
       </button>
-      <button className="btn_small" onClick={() => myFunc2(addressaccess)}>Confirm remove Address</button>
-      <h4>AccessList</h4>
+      <br />
+      <button className="btn_small" onClick={() => myFunc2(addressaccess)}>
+        Confirm REMOVE Access
+      </button>
+      <h1 class="acc">AccessList</h1>
       <div>{accessList}</div>
     </div>
   );
