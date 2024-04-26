@@ -11,6 +11,12 @@ export default function Display({ account, contract }) {
   const [addressaccess, setAddressAccess] = useState("");
   const [accessList, setAccessList] = useState([]);
   const [selectedData, setSelectedData] = useState(null);
+  const [dataItem, Setdataitem] = useState(null);
+  // const [action, SetAction] = useState("G");
+
+  const timestamp = Date.now();
+  const dateObject = new Date(timestamp);
+  const humanReadableDate = dateObject.toLocaleString();
 
   const handleAddressInputChange = (e) => {
     setAddressAccess(e.target.value);
@@ -30,11 +36,36 @@ export default function Display({ account, contract }) {
   const closeModal = () => {
     setModalIsOpen(false);
   };
-  function giveacces(data) {
-    console.log("hete");
-    handleGiveAccess(data, addressaccess);
+  function giveacces(data, addressaccess) {
+    console.log("hete", addressaccess);
+    // SetAction("G");
+    Setdataitem(data);
+    console.log(data);
   }
-  async function handleGiveAccess(data, addressaccess) {
+  function removeAccess(data, addressaccess) {
+    console.log("here", addressaccess);
+    // SetAction("R");
+    // console.log(action);
+    Setdataitem(data);
+    console.log(data);
+  }
+ async function handleRemoveAccess(addressaccess, data) {
+    console.log("address is ", addressaccess);
+    console.log(data);
+    // myFunc(addressaccess);
+    if (data && addressaccess) {
+      try {
+        console.log("done", data);
+        await contract.removeAccess(data.url, addressaccess, data.name + " removed access for " + addressaccess, humanReadableDate);
+        console.log(addressaccess);
+      } catch (error) {
+        console.error("Error calling contract.giveAccess:", error);
+      }
+    } else {
+      console.log("No data selected");
+    }
+  }
+  async function handleGiveAccess(addressaccess, data) {
     console.log("address is ", addressaccess);
     console.log(data);
     // myFunc(addressaccess);
@@ -72,7 +103,13 @@ export default function Display({ account, contract }) {
   }
   const myFunc = (address) => {
     console.log(address);
+    handleGiveAccess(address, dataItem);
   };
+
+  const myFunc2 = (address) => {
+    console.log(address);
+    handleRemoveAccess(address, dataItem);
+  }
 
   async function getTransaction() {
     let transaction = await contract.getTransactions();
@@ -88,9 +125,7 @@ export default function Display({ account, contract }) {
     });
     setTransactData(transact);
   }
-  const timestamp = Date.now();
-  const dateObject = new Date(timestamp);
-  const humanReadableDate = dateObject.toLocaleString();
+  
 
   async function getdata() {
     let dataArray;
@@ -125,11 +160,12 @@ export default function Display({ account, contract }) {
               <button
                 className="btn_small"
                 // onClick={() => console.log(addressaccess)}
-                onClick={() => giveacces(data)}
+                onClick={() => giveacces(data, addressaccess)}
               >
                 Give Access
               </button>
             </div>
+            <button className="btn_small" onClick={() => removeAccess(data, addressaccess)}>Remove Access</button>
             <button
               className="btn_small"
               onClick={() => handleaccessList(data.url)}
@@ -172,6 +208,7 @@ export default function Display({ account, contract }) {
       <button className="btn_small" onClick={() => myFunc(addressaccess)}>
         Confirm Address
       </button>
+      <button className="btn_small" onClick={() => myFunc2(addressaccess)}>Confirm remove Address</button>
       <h4>AccessList</h4>
       <div>{accessList}</div>
     </div>

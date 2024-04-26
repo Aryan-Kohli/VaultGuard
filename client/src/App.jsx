@@ -47,14 +47,14 @@ function App() {
   }, []);
   return (
     <>
-      {!modalOpen && (
+      {/* {!modalOpen && (
         <button className="sharebtn" onClick={() => setModalOpen(true)}>
           Share
         </button>
       )}
       {modalOpen && (
         <Modal setModalOpen={setModalOpen} contract={contract}></Modal>
-      )}
+      )} */}
       <div className="App">
         <div className="maintitleContainer">
           <h1 className="maintitle">Vault Guard</h1>
