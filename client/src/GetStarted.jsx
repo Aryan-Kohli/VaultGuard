@@ -30,7 +30,7 @@ function GetStarted() {
         // console.log(signer);
         const address = signer.address;
         setAccount(address);
-        let contractAddress = "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9";
+        let contractAddress = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
 
         const contract = new ethers.Contract(
           contractAddress,

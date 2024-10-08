@@ -69,12 +69,13 @@ contract Upload2 {
     }
 
     function sharedFiles(
-        address _owner,
+        address _owner
     ) external view returns (FileAccess[] memory) {
-        
         return Ownership[msg.sender][_owner];
     }
-
+    function helloWorld() external returns (string memory) {
+        return "Hello World";
+    }
     function giveAccess(
         string memory _url,
         string memory _name,
