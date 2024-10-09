@@ -185,8 +185,8 @@ export default function Welcome() {
         </div>
       </div>
       <div className="about" id="about">
-        <h2 className="blu">Team</h2>
-        <h2 className="wit">Shareefzaade</h2>
+        <h2 className="blu">Meet The Team</h2>
+        {/* <h2 className="wit">Shareefzaade</h2> */}
       </div>
       <img src={g3} className="team" alt="" />
     </div>

@@ -185,10 +185,8 @@ export default function Display({ account, myaddress, contract }) {
       }
       console.log(dataArray);
     } else {
-      // dataArray = await contract.getMyFiles();
-      dataArray = await contract.helloWorld();
+      dataArray = await contract.getMyFiles();
       console.log(dataArray);
-      return;
       const isEmpty = Object.keys(dataArray).length === 0;
       if (isEmpty) {
       } else {

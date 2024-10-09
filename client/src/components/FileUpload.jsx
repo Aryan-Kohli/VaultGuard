@@ -3,6 +3,7 @@ import axios from "axios";
 export default function FileUpload({ account, contract, provider }) {
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState("No file chosen");
+  const [uploading, setuploading] = useState(false);
   async function handleSubmit(e) {
     e.preventDefault();
     try {
@@ -17,7 +18,7 @@ export default function FileUpload({ account, contract, provider }) {
         cidVersion: 0,
       });
       formData.append("pinataOptions", options);
-
+      setuploading(true);
       const res = await fetch(
         "https://api.pinata.cloud/pinning/pinFileToIPFS",
         {
@@ -36,8 +37,15 @@ export default function FileUpload({ account, contract, provider }) {
       const humanReadableDate = dateObject.toLocaleString();
       // const ImgHash = `https://gateway.pinata.cloud/ipfs/${resData.IpfsHash}`;
       // contract.add(account, resData.IpfsHash, fileName);
-      var string =" Uploaded " + fileName + " at " + humanReadableDate;
-      contract.AddFile(resData.IpfsHash, fileName,humanReadableDate,"128kb", string);
+      var string = " Uploaded " + fileName + " at " + humanReadableDate;
+      setuploading(false);
+      await contract.AddFile(
+        resData.IpfsHash,
+        fileName,
+        humanReadableDate,
+        "128kb",
+        string
+      );
       console.log(string);
 
       alert("Successfully Image Uploaded");
@@ -55,6 +63,7 @@ export default function FileUpload({ account, contract, provider }) {
   }
   return (
     <div>
+      <div>{uploading && "FILE IS UPLOADING...."}</div>
       <div className="uploaddiv">
         <form action="" onSubmit={handleSubmit}>
           <label for="fileInput" class="custom-file-upload">
