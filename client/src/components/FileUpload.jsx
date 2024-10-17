@@ -39,11 +39,12 @@ export default function FileUpload({ account, contract, provider }) {
       // contract.add(account, resData.IpfsHash, fileName);
       var string = " Uploaded " + fileName + " at " + humanReadableDate;
       setuploading(false);
+      const fileSize = (file.size / 1024).toFixed(2);
       await contract.AddFile(
         resData.IpfsHash,
         fileName,
         humanReadableDate,
-        "128kb",
+        fileSize + "kb",
         string
       );
       console.log(string);
