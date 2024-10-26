@@ -97,15 +97,34 @@ export default function Display({ account, myaddress, contract }) {
   async function handleaccessList(url) {
     var list = await contract.getAccesList(url);
     console.log(url);
-    const accesslist = list.map((item, index) => {
+
+    const accessListRows = list.map((item, index) => {
       return (
-        <ul key={index}>
-          <li>{item[0]}</li>
-        </ul>
+        <tr key={index}>
+          <td>{index + 1}</td> {/* Row number */}
+          <td>{item[0]}</td>{" "}
+          {/* Adjust this based on the properties of your access list item */}
+          {/* Add more <td> elements for other properties of the item if needed */}
+        </tr>
       );
     });
-    setAccessList(accesslist);
+
+    const table = (
+      <table className="table table-dark table-hover mt-4 table-striped">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Access Details</th>
+            {/* Add more <th> elements for other properties if needed */}
+          </tr>
+        </thead>
+        <tbody>{accessListRows}</tbody>
+      </table>
+    );
+
+    setAccessList(table);
   }
+
   const myFunc = (address) => {
     console.log(address);
     handleGiveAccess(address, dataItem);
@@ -119,19 +138,81 @@ export default function Display({ account, myaddress, contract }) {
 
   async function getTransaction() {
     let transaction = await contract.getTransactions();
-    // (transaction.map((item) => {
-    //   console.log(item[0]);
-    // }));
-    const transact = transaction.map((item, index) => {
+
+    // Check the structure of the transaction data
+    console.log(transaction); // Log the transaction to see its structure
+
+    // Convert to a mutable array if necessary
+    const mutableTransactions = Array.from(transaction); // or use [...transaction]
+
+    // Reverse the order of the transaction array
+    const transact = mutableTransactions.reverse().map((item, index) => {
       return (
-        <ul key={index}>
-          <li>{item[0]}</li>
-        </ul>
+        <tr key={index}>
+          <td>{mutableTransactions.length - index}</td>{" "}
+          {/* Row number in reverse order */}
+          <td>{item[0]}</td>{" "}
+          {/* Adjust this based on the properties of your transaction */}
+          {/* Add more <td> elements for other properties of the transaction if needed */}
+        </tr>
       );
     });
-    setTransactData(transact);
+
+    const table = (
+      <table className="table table-dark mt-4 table-striped">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Transaction Details</th>
+            {/* Add more <th> elements for other properties */}
+          </tr>
+        </thead>
+        <tbody>{transact}</tbody>
+      </table>
+    );
+
+    setTransactData(table);
   }
 
+  const handleDownload = async (url, filename) => {
+    try {
+      const response = await fetch(url);
+      console.log(response);
+      // Check if the response is okay
+      // if (!response.ok) {
+      //   throw new Error(`Failed to download file: ${response.statusText}`);
+      // }
+
+      const blob = await response.blob();
+      const link = document.createElement("a");
+      const blobUrl = URL.createObjectURL(blob);
+
+      // Automatically set the filename if it's not provided
+      const contentDisposition = response.headers.get("content-disposition");
+      if (
+        !filename &&
+        contentDisposition &&
+        contentDisposition.includes("filename=")
+      ) {
+        filename = contentDisposition
+          .split("filename=")[1]
+          .split(";")[0]
+          .replace(/['"]/g, "");
+      }
+
+      // Default to a generic filename if none is provided
+      filename = filename || "downloaded_file";
+
+      link.href = blobUrl;
+      link.setAttribute("download", filename);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(blobUrl); // Clean up
+    } catch (error) {
+      console.error("Download failed:", error);
+    }
+  };
   async function getdata() {
     let dataArray;
     const otherAddress = document.getElementsByName("addresses")[0].value;
@@ -144,45 +225,47 @@ export default function Display({ account, myaddress, contract }) {
       } else {
         const imgs = dataArray.map((data, index) => {
           return (
-            <div key={index} className="file">
-              <p>{data.name}</p>
-              <p>{data.size}</p>
-              <p>{data.timeStamp}</p>
-              <MdDocumentScanner
-                className="icons"
-                onClick={() => {
-                  window.open(
-                    `https://gateway.pinata.cloud/ipfs/${data.url}`,
-                    "_blank"
-                  );
-                }}
-              />
-              {/* <div>
+            <tr key={index}>
+              <th scope="row">{index + 1}</th>
+              <td>{data.name}</td>
+              <td>{data.size}</td> {/* Display size in MB */}
+              <td>{new Date(data.timeStamp).toLocaleString()}</td>{" "}
+              {/* Convert timestamp */}
+              <td>
                 <button
-                  className="btn_small1"
-                  // onClick={() => console.log(addressaccess)}
-                  onClick={() => giveacces(data, addressaccess)}
+                  className="download_btn"
+                  onClick={() =>
+                    handleDownload(
+                      `https://gateway.pinata.cloud/ipfs/${data.url}`,
+                      data.name
+                    )
+                  }
                 >
-                  Give Access
+                  Download File
                 </button>
-              </div>
-              <button
-                className="btn_small1"
-                onClick={() => removeAccess(data, addressaccess)}
-              >
-                Remove Access
-              </button>
-              <button
-                className="btn_small1"
-                onClick={() => handleaccessList(data.url)}
-              >
-                GetAccessList
-              </button> */}
-            </div>
+              </td>
+            </tr>
           );
         });
-        setData(imgs);
+
+        const table = (
+          <table className="table mt-4 table-hover table-dark ">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">File Name</th>
+                <th scope="col">File Size</th>
+                <th scope="col">Uploaded Time</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>{imgs}</tbody>
+          </table>
+        );
+
+        setData(table);
       }
+
       console.log(dataArray);
     } else {
       dataArray = await contract.getMyFiles();
@@ -192,44 +275,72 @@ export default function Display({ account, myaddress, contract }) {
       } else {
         const imgs = dataArray.map((data, index) => {
           return (
-            <div key={index} className="file">
-              <p>{data.name}</p>
-              <p>{data.size}</p>
-              <p>{data.timeStamp}</p>
-              <MdDocumentScanner
-                className="icons"
-                onClick={() => {
-                  window.open(
-                    `https://gateway.pinata.cloud/ipfs/${data.url}`,
-                    "_blank"
-                  );
-                }}
-              />
-              <div>
+            <tr key={index}>
+              <th scope="row">{index + 1}</th>
+              <td>{data.name}</td>
+              <td>{data.size}</td> {/* Display size in MB */}
+              <td>{new Date(data.timeStamp).toLocaleString()}</td>{" "}
+              {/* Convert timestamp */}
+              <td>
+                <button
+                  className="download_btn"
+                  onClick={() =>
+                    handleDownload(
+                      `https://gateway.pinata.cloud/ipfs/${data.url}`,
+                      data.name
+                    )
+                  }
+                >
+                  Download File
+                </button>
+              </td>
+              <td>
                 <button
                   className="btn_small1"
-                  // onClick={() => console.log(addressaccess)}
                   onClick={() => giveacces(data, addressaccess)}
                 >
                   Give Access
                 </button>
-              </div>
-              <button
-                className="btn_small1"
-                onClick={() => removeAccess(data, addressaccess)}
-              >
-                Remove Access
-              </button>
-              <button
-                className="btn_small1"
-                onClick={() => handleaccessList(data.url)}
-              >
-                GetAccessList
-              </button>
-            </div>
+              </td>
+              <td>
+                <button
+                  className="btn_small1"
+                  onClick={() => removeAccess(data, addressaccess)}
+                >
+                  Remove Access
+                </button>
+              </td>
+              <td>
+                <button
+                  className="btn_small1"
+                  onClick={() => handleaccessList(data.url)}
+                >
+                  GetAccessList
+                </button>
+              </td>
+            </tr>
           );
         });
-        setData(imgs);
+
+        const table = (
+          <table className="table mt-4 table-hover table-dark ">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">File Name</th>
+                <th scope="col">File Size</th>
+                <th scope="col">Uploaded Time</th>
+                <th scope="col">Actions</th>
+                <th scope="col">Give Access</th>
+                <th scope="col">Remove Access</th>
+                <th scope="col">Access List</th>
+              </tr>
+            </thead>
+            <tbody>{imgs}</tbody>
+          </table>
+        );
+
+        setData(table);
       }
     }
   }
