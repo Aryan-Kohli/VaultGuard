@@ -6,6 +6,9 @@ import Display from "./components/Display";
 import Modal from "./components/Modal";
 import "./GetStarted.css";
 import logo from "./assets/g1.png";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Instructions from "./components/Instructions";
 
 function GetStarted() {
   const [account, setAccount] = useState("");
@@ -57,13 +60,16 @@ function GetStarted() {
         <Modal setModalOpen={setModalOpen} contract={contract}></Modal>
       )} */}
       <div className="App">
+        <ToastContainer />
         <div className="maintitleContainer">
           {/* <h1 className="maintitle">Vault Guard</h1> */}
           <img src={logo} className="lg"></img>
         </div>
-        <div className="accountheadContainer">
-          <h1 className="accounthead">Account : </h1>
-          <h1 className="accountNum">{account ? account : "NOT CONNECTED"}</h1>
+        <Instructions />
+        <div className="acc">
+          <p className="heading">Account Number: </p>
+          <input type="text" value={account ? account : "NOT CONNECTED"} />
+          {/* <h1 className="accountNum">{account ? account : "NOT CONNECTED"}</h1> */}
         </div>
         <FileUpload
           account={account}

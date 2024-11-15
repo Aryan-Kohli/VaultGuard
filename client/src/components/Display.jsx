@@ -2,7 +2,10 @@ import React from "react";
 import { useEffect, useState } from "react";
 import "./Display.css";
 import { MdDocumentScanner } from "react-icons/md";
-import Modal from "react-modal";
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
 
 export default function Display({ account, myaddress, contract }) {
   const [data, setData] = useState([]);
@@ -12,6 +15,21 @@ export default function Display({ account, myaddress, contract }) {
   const [accessList, setAccessList] = useState([]);
   const [selectedData, setSelectedData] = useState(null);
   const [dataItem, Setdataitem] = useState(null);
+  const [show, setShow] = useState(false);
+  const [showtransModal, setShowtransModal] = useState(false);
+  const [accessModal, setAccessModal] = useState(false);
+  const [removeAccessModal, setRemoveAccessModal] = useState(false);
+
+
+  const HandleCloseAccess = () => setAccessModal(false);
+  const HandleCloseRemoveAccess = () => setRemoveAccessModal(false);
+
+  
+  const handletransClose = () => setShowtransModal(false);
+  const handletransShow = () => setShowtransModal(true);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
   // const [action, SetAction] = useState("G");
 
   const timestamp = Date.now();
@@ -22,25 +40,26 @@ export default function Display({ account, myaddress, contract }) {
     setAddressAccess(e.target.value);
   };
 
-  const openModal = (data) => {
-    setSelectedData(data);
-    setModalIsOpen(true);
-    // setSelectedData(data);
-    console.log(selectedData);
-    console.log("modal opened");
-  };
+  // const openModal = (data) => {
+  //   setSelectedData(data);
+  //   // setModalIsOpen(true);
+  //   // setSelectedData(data);
+  //   console.log(selectedData);
+  //   console.log("modal opened");
+  // };
   // const handleaccess = (data) => {
   //   setSelectedData(data);
   // };
 
-  const closeModal = () => {
-    setModalIsOpen(false);
-  };
+  // const closeModal = () => {
+  //   setModalIsOpen(false);
+  // };
   function giveacces(data, addressaccess) {
     console.log("hete", addressaccess);
     // SetAction("G");
     Setdataitem(data);
     console.log(data);
+    setAccessModal(true);
   }
   function removeAccess(data, addressaccess) {
     console.log("here", addressaccess);
@@ -48,6 +67,7 @@ export default function Display({ account, myaddress, contract }) {
     // console.log(action);
     Setdataitem(data);
     console.log(data);
+    setRemoveAccessModal(true);
   }
   async function handleRemoveAccess(addressaccess, data) {
     console.log("address is ", addressaccess);
@@ -63,6 +83,10 @@ export default function Display({ account, myaddress, contract }) {
           humanReadableDate
         );
         console.log(addressaccess);
+        toast.success("Accesss removed Successfully", {
+          theme: "dark",
+        });
+        setRemoveAccessModal(false);
       } catch (error) {
         console.error("Error calling contract.giveAccess:", error);
       }
@@ -86,6 +110,10 @@ export default function Display({ account, myaddress, contract }) {
           data.name + " shared with " + addressaccess
         );
         console.log(addressaccess);
+        toast.success("Accesss granted Successfully", {
+          theme: "dark",
+        });
+        setAccessModal(false);
       } catch (error) {
         console.error("Error calling contract.giveAccess:", error);
       }
@@ -113,8 +141,8 @@ export default function Display({ account, myaddress, contract }) {
       <table className="table table-dark table-hover mt-4 table-striped">
         <thead>
           <tr>
-            <th scope="col">#</th>
-            <th scope="col">Access Details</th>
+            {/* <th scope="col">#</th>
+            <th scope="col">Access Details</th> */}
             {/* Add more <th> elements for other properties if needed */}
           </tr>
         </thead>
@@ -123,6 +151,21 @@ export default function Display({ account, myaddress, contract }) {
     );
 
     setAccessList(table);
+    setShow(true);
+    <Modal
+    data-bs-theme="dark"
+    show = {show} onHide = {handleClose} animation={false}>
+     <Modal.Header closeButton>
+       <Modal.Title>Access List</Modal.Title>
+     </Modal.Header>
+     <Modal.Body>
+       {accessList}
+     </Modal.Body>
+     <Modal.Footer>
+       <button onClick={handleClose}>Close</button>
+     </Modal.Footer>
+   </Modal>
+
   }
 
   const myFunc = (address) => {
@@ -162,8 +205,8 @@ export default function Display({ account, myaddress, contract }) {
       <table className="table table-dark mt-4 table-striped">
         <thead>
           <tr>
-            <th scope="col">#</th>
-            <th scope="col">Transaction Details</th>
+            {/* <th scope="col">#</th>
+            <th scope="col">Transaction Details</th> */}
             {/* Add more <th> elements for other properties */}
           </tr>
         </thead>
@@ -172,6 +215,20 @@ export default function Display({ account, myaddress, contract }) {
     );
 
     setTransactData(table);
+    setShowtransModal(true);
+    <Modal
+     data-bs-theme="dark"
+     show = {showtransModal} onHide = {handletransClose} animation={false}>
+      <Modal.Header closeButton>
+        <Modal.Title>Transactions Details</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        {transactData}  
+      </Modal.Body>
+      <Modal.Footer>
+       <button onClick={handletransClose}>Close</button>
+     </Modal.Footer>
+    </Modal>
   }
 
   const handleDownload = async (url, filename) => {
@@ -347,23 +404,42 @@ export default function Display({ account, myaddress, contract }) {
   return (
     <div className="displayImgdiv">
       {/* <h1>IMAGES DATA</h1> */}
+      <div className="acc">
+      <p className="heading">Recipient&apos;s Key :</p>
       <input
         name="addresses"
-        className="addressinput"
+        type="text"
         placeholder="Enter adderess"
       ></input>
-      <button onClick={getdata} className="searchFiles">
-        Search files
+      </div>
+    
+      <button onClick={getdata} className="whiteBtn">
+        List All Files
       </button>
       <div className="dataDiv">{data}</div>
 
-      <p>{addressaccess}</p>
+      {/* <p>{addressaccess}</p> */}
       <button className="btn" onClick={getTransaction}>
         Get Transactions
       </button>
-      <div className="transactionDiv">{transactData}</div>
-      <input
-        className="addressinput"
+      <Modal
+     data-bs-theme="dark"
+     show = {showtransModal} onHide = {handletransClose} animation={false}>
+      <Modal.Header closeButton>
+        <Modal.Title>Transactions Details</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        {transactData}
+        {/* <h2>Transactions</h2> */}
+      </Modal.Body>
+      <Modal.Footer>
+       <button onClick={handletransClose}>Close</button>
+     </Modal.Footer>
+    </Modal>
+      {/* <div className="transactionDiv">{transactData}</div> */}
+      <div className="acc">
+        <p className="heading">Sender&apos; Key:</p>
+        <input
         type="text"
         onChange={(e) => {
           setAddressAccess(e.target.value);
@@ -371,15 +447,61 @@ export default function Display({ account, myaddress, contract }) {
         }}
         placeholder="Give / Remove Access"
       />
-      <button className="btn_small" onClick={() => myFunc(addressaccess)}>
+      </div>
+      <div className="but-give-revoke">
+      <button className="but5" onClick={() => myFunc(addressaccess)}>
         Confirm GIVE Access
       </button>
-      <br />
-      <button className="btn_small" onClick={() => myFunc2(addressaccess)}>
+      <button className="but6" onClick={() => myFunc2(addressaccess)}>
         Confirm REMOVE Access
       </button>
-      <h1 class="acc">AccessList</h1>
-      <div>{accessList}</div>
+      </div>
+      {/* <h1 className="acc">AccessList</h1>
+      <Button variant = "primary" onClick={handleShow} >Get Access List</Button> */}
+      <Modal
+       data-bs-theme="dark"
+       show = {show} onHide = {handleClose} animation={false}>
+        <Modal.Header closeButton>
+          <Modal.Title>Access List</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {accessList}
+        </Modal.Body>
+        <Modal.Footer>
+          <button onClick={handleClose}>Close</button>
+        </Modal.Footer>
+      </Modal>
+      {/* <div>{accessList}</div> */}
+
+      <Modal
+        data-bs-theme="dark"
+       show = {accessModal} onHide = {HandleCloseAccess}>
+        <Modal.Header>
+          <Modal.Title>Confirming To Give Access</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+            <p>Are You sure you want to give Access ?</p>
+        </Modal.Body>
+        <Modal.Footer>
+        <button onClick = {() => myFunc(addressaccess)}>Yes</button>
+        <button onClick = {HandleCloseAccess}>No</button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal
+        data-bs-theme="dark"
+       show = {removeAccessModal} onHide = {HandleCloseAccess}>
+        <Modal.Header>
+          <Modal.Title>Confirming To Remove Access</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+            <p>Are You sure you want to remove Access ?</p>
+        </Modal.Body>
+        <Modal.Footer>
+        <button onClick = {() => myFunc2(addressaccess)}>Yes</button>
+        <button onClick = {HandleCloseRemoveAccess}>No</button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

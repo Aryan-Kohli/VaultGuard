@@ -1,0 +1,42 @@
+
+.float-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    background-color: #4141D0;
+    color: white;
+    cursor: pointer;   
+    border-radius: 20px;
+    padding: 20px;
+    border: none;
+    font-weight: bolder;
+}
+
+
+
+.note{
+    text-align: center;
+    font-weight: 300;
+    color: rgb(199, 199, 36);
+    font-size: 20px;
+    background-color:rgb(124, 44, 44);
+}
+.note-header{
+    text-align: center;
+    color: rgb(175, 175, 206);
+    font-size: 25px;
+    background-color:inherit;
+}
+.info{
+    background-color:rgb(124, 44, 44);
+    padding: 10px;
+    /* width: 80%; */
+    /* margin-left: 140px; */
+    border: 2px solid lightgray;
+    /* border-radius: 70px; */
+}
+
+b{
+    background-color:rgb(124, 44, 44);
+}

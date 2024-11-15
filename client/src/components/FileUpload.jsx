@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import { MdFamilyRestroom } from "react-icons/md";
+import 'react-toastify/dist/ReactToastify.css';
+
 export default function FileUpload({ account, contract, provider }) {
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState("No file chosen");
@@ -19,6 +23,13 @@ export default function FileUpload({ account, contract, provider }) {
       });
       formData.append("pinataOptions", options);
       setuploading(true);
+      const toastId = toast.loading("Uploading File... Please wait", {
+        theme: "dark",
+        position: 'top-right',
+        autoClose: false,
+        closeOnClick: false,
+        draggable: false,
+      });
       const res = await fetch(
         "https://api.pinata.cloud/pinning/pinFileToIPFS",
         {
@@ -48,12 +59,20 @@ export default function FileUpload({ account, contract, provider }) {
         string
       );
       console.log(string);
-
-      alert("Successfully Image Uploaded");
+      toast.update(toastId, {
+        theme: "dark",
+        render: "File Uploaded Successfully",
+        type: "success",
+        autoClose: 5000,
+        isLoading: false,
+        closeButton: true,
+      });
+      // alert("Successfully Image Uploaded");
       setFileName("No image selected");
       setFile(null);
     } catch (error) {
       console.log(error);
+      toast.error("Error Uploading File");
     }
   }
   function retreiveFile(e) {
@@ -64,10 +83,10 @@ export default function FileUpload({ account, contract, provider }) {
   }
   return (
     <div>
-      <div>{uploading && "FILE IS UPLOADING...."}</div>
+      {/* <div>{uploading && "FILE IS UPLOADING...."}</div> */}
       <div className="uploaddiv">
         <form action="" onSubmit={handleSubmit}>
-          <label for="fileInput" class="custom-file-upload">
+          <label for="fileInput" className="custom-file-upload">
             Choose a file
           </label>
           <input
