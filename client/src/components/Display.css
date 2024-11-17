@@ -66,6 +66,106 @@
     border: none;
     font-weight: 500;
 }
+.whiteBtn {
+    padding: 10px 30px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background-color: white;
+    color: black;
+    border-radius: 20px;
+    font-size: larger;
+    /* margin-left: 670px; */
+    align-items: center;
+}
+
+.whiteBtn:hover {
+    background-color: rgb(215, 196, 196);
+    border: 2px solid white;
+    color: black;
+    border-radius:20px;
+    font-size: larger;
+    cursor: pointer;
+}
+
+.acc{
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+.acc input{
+    background-color: rgb(38, 36, 34);
+    width: 850px;
+    height: 50px;
+    border-radius: 20px;
+    padding-left: 20px;
+    margin-top: 25px;
+    font-size: 20px;
+    border: none;
+    color: white;
+    margin-right: 45px;
+}
+
+.acc input:focus {
+    background-color: rgb(38, 36, 34);
+    color: white;
+    
+}
+.heading{
+    font-size: 30px;
+    font-weight: 400;
+    margin-top: 22px;
+    margin-right: 17px;
+    padding-left: 80px;
+    color: #A1A1C6;
+}
+.but-give-revoke{
+    display: flex;
+    gap:5px;
+    /* margin-left: 580px; */
+}
+.but5{
+    padding: 10px 30px;
+    border:none;
+    /* background-color: #4fa535; */
+    background-color: #376729;
+    border-radius: 35px;
+    font-size: larger;
+    margin-bottom: 20px;
+    color: white;
+}
+.but5:hover{
+    padding: 10px 30px;
+    color: #376729;
+    background-color: #f3f6f2;
+    border-width: 100px;
+    /* border-radius: 15px 0 0 15px; */
+    border-radius: 35px;
+    font-size: larger;
+    
+}
+.but6{
+    padding: 10px 30px;
+    border:none;
+    background-color: #a50f0f;
+    /* border-radius: 0 15px 15px 0; */
+    font-size: larger;
+    border-radius: 55px;
+    margin-bottom: 20px;
+    color: white;
+}
+.but6:hover{
+    padding: 10px 30px;
+    border:none;
+    background-color: white;
+    color:#a50f0f;
+    /* border-radius: 0 15px 15px 0; */
+    border-radius: 55px;
+    font-size: larger;
+}
+
+
+
 .btn_small1 {
     border-radius: 30px;
     /* margin-bottom: 30px; */
