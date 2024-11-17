@@ -127,17 +127,20 @@
 .but5{
     padding: 10px 30px;
     border:none;
-    background-color: #4fa535;
-    border-radius: 15px 0 0 15px;
+    /* background-color: #4fa535; */
+    background-color: #376729;
+    border-radius: 35px;
     font-size: larger;
     margin-bottom: 20px;
     color: white;
 }
 .but5:hover{
     padding: 10px 30px;
-    border:none;
-    background-color: #3b7e27;
-    border-radius: 15px 0 0 15px;
+    color: #376729;
+    background-color: #f3f6f2;
+    border-width: 100px;
+    /* border-radius: 15px 0 0 15px; */
+    border-radius: 35px;
     font-size: larger;
     
 }
@@ -145,16 +148,19 @@
     padding: 10px 30px;
     border:none;
     background-color: #a50f0f;
-    border-radius: 0 15px 15px 0;
+    /* border-radius: 0 15px 15px 0; */
     font-size: larger;
+    border-radius: 55px;
     margin-bottom: 20px;
     color: white;
 }
 .but6:hover{
     padding: 10px 30px;
     border:none;
-    background-color: #650a0a;
-    border-radius: 0 15px 15px 0;
+    background-color: white;
+    color:#a50f0f;
+    /* border-radius: 0 15px 15px 0; */
+    border-radius: 55px;
     font-size: larger;
 }
 

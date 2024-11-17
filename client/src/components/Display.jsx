@@ -3,10 +3,11 @@ import { useEffect, useState } from "react";
 import "./Display.css";
 import { MdDocumentScanner } from "react-icons/md";
 import { toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
-
+import "react-toastify/dist/ReactToastify.css";
+import Modal from "react-bootstrap/Modal";
+import Button from "react-bootstrap/Button";
+import { ethers } from "ethers";
+import calculateTransactionCost from "./feesCalculator";
 export default function Display({ account, myaddress, contract }) {
   const [data, setData] = useState([]);
   const [transactData, setTransactData] = useState([]);
@@ -19,12 +20,12 @@ export default function Display({ account, myaddress, contract }) {
   const [showtransModal, setShowtransModal] = useState(false);
   const [accessModal, setAccessModal] = useState(false);
   const [removeAccessModal, setRemoveAccessModal] = useState(false);
-
+  const [deletefileModal, setDeletefileModal] = useState(false);
 
   const HandleCloseAccess = () => setAccessModal(false);
   const HandleCloseRemoveAccess = () => setRemoveAccessModal(false);
+  const HandleCloseDeletefile = () => setDeletefileModal(false);
 
-  
   const handletransClose = () => setShowtransModal(false);
   const handletransShow = () => setShowtransModal(true);
 
@@ -54,14 +55,90 @@ export default function Display({ account, myaddress, contract }) {
   // const closeModal = () => {
   //   setModalIsOpen(false);
   // };
+  async function handleUnpin(cid, name) {
+    let resp = "";
+    try {
+      resp = await contract.deleteFile(
+        cid,
+        name + " has been deleted.",
+        myaddress + " has deleted the file " + name + ".",
+        humanReadableDate
+      );
+
+      // console.log("cid ", cid);
+    } catch (error) {
+      console.log("Error deleting file:", error);
+      return;
+    }
+
+    const toastId = toast.loading("Unpinning file...", {
+      theme: "dark",
+      position: "top-right",
+      autoClose: false,
+      closeOnClick: false,
+      draggable: false,
+    });
+    try {
+      const res = await fetch(`https://api.pinata.cloud/pinning/unpin/${cid}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkZGE4MDRkYi01YjhlLTRiMGYtODg2OC04MWFkYWQwYmQ5MDQiLCJlbWFpbCI6ImtvaGxpYXJ5YW4yMUBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGluX3BvbGljeSI6eyJyZWdpb25zIjpbeyJpZCI6IkZSQTEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX0seyJpZCI6Ik5ZQzEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX1dLCJ2ZXJzaW9uIjoxfSwibWZhX2VuYWJsZWQiOmZhbHNlLCJzdGF0dXMiOiJBQ1RJVkUifSwiYXV0aGVudGljYXRpb25UeXBlIjoic2NvcGVkS2V5Iiwic2NvcGVkS2V5S2V5IjoiZDdkZTBiOTgyM2NmOTEzZTU0Y2QiLCJzY29wZWRLZXlTZWNyZXQiOiIyMTVhZjhkYmI3OTlmYTY3N2E3OTAyN2ZkNTg1NzcyMjYzN2ZkZjExMTFlYzM5M2Q3ZmI2MGFmODFjODZmNzJhIiwiaWF0IjoxNzEzNTM5OTU4fQ.x5pJ2NKHPiDNU1OQwhsYv26gjKApseewB0QO8z7jJWk`,
+        },
+      });
+
+      if (res.ok) {
+        toast.update(toastId, {
+          render: "File successfully unpinned!",
+          type: "success",
+          isLoading: false,
+          autoClose: 5000,
+        });
+        console.log("file unpinned");
+        setData([]);
+        const allfees = await calculateTransactionCost(resp);
+        toast.info(
+          `Transaction Cost: \n ${allfees.totalCostInUSD.toFixed(
+            4
+          )} USD    \n ${allfees.totalCostInINR.toFixed(
+            4
+          )} INR         ${allfees.gasCostInEther.toFixed(4)} ETH `,
+          {
+            theme: "dark",
+            position: "top-right",
+            autoClose: 10000,
+
+            closeOnClick: true,
+            draggable: true,
+          }
+        );
+      } else {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to unpin the file.");
+      }
+    } catch (error) {
+      toast.update(toastId, {
+        render: `Error: ${error.message}`,
+        type: "error",
+        isLoading: false,
+        autoClose: 5000,
+      });
+      console.error("Error unpinning file:", error);
+    }
+  }
   function giveacces(data, addressaccess) {
-    console.log("hete", addressaccess);
+    // console.log("hete", addressaccess);
     // SetAction("G");
+    // console.log(data.name);
     Setdataitem(data);
-    console.log(data);
     setAccessModal(true);
   }
   function removeAccess(data, addressaccess) {
+    // if (addressaccess === "") {
+    //   toast.error("Please Enter Address", {
+    //     theme: "dark",
+    //   });
+    //   return;
+    // }
     console.log("here", addressaccess);
     // SetAction("R");
     // console.log(action);
@@ -71,22 +148,40 @@ export default function Display({ account, myaddress, contract }) {
   }
   async function handleRemoveAccess(addressaccess, data) {
     console.log("address is ", addressaccess);
-    console.log(data);
+    console.log(data.url);
     // myFunc(addressaccess);
     if (data && addressaccess) {
       try {
         console.log("done", data);
-        await contract.removeAccess(
+        const resp = await contract.removeAccess(
           data.url,
           addressaccess,
-          data.name + " removed access for " + addressaccess,
+          data.name + " access removed for " + addressaccess,
+          myaddress + " has removed their files access for " + data.name + ".",
           humanReadableDate
         );
         console.log(addressaccess);
         toast.success("Accesss removed Successfully", {
           theme: "dark",
         });
+
         setRemoveAccessModal(false);
+        const allfees = await calculateTransactionCost(resp);
+        toast.info(
+          `Transaction Cost: \n ${allfees.totalCostInUSD.toFixed(
+            4
+          )} USD    \n ${allfees.totalCostInINR.toFixed(
+            4
+          )} INR         ${allfees.gasCostInEther.toFixed(4)} ETH `,
+          {
+            theme: "dark",
+            position: "top-right",
+            autoClose: 10000,
+
+            closeOnClick: true,
+            draggable: true,
+          }
+        );
       } catch (error) {
         console.error("Error calling contract.giveAccess:", error);
       }
@@ -96,24 +191,42 @@ export default function Display({ account, myaddress, contract }) {
   }
   async function handleGiveAccess(addressaccess, data) {
     console.log("address is ", addressaccess);
-    console.log(data);
+    console.log(data.url);
     // myFunc(addressaccess);
     if (data && addressaccess) {
       try {
         console.log("done", data);
-        await contract.giveAccess(
+        const resp = await contract.giveAccess(
           data.url,
           data.name,
           humanReadableDate,
           "128kb",
           addressaccess,
-          data.name + " shared with " + addressaccess
+          data.name + " shared with " + addressaccess,
+          data.name + "has been shared by " + myaddress
         );
         console.log(addressaccess);
         toast.success("Accesss granted Successfully", {
           theme: "dark",
         });
         setAccessModal(false);
+
+        const allfees = await calculateTransactionCost(resp);
+        toast.info(
+          `Transaction Cost: \n ${allfees.totalCostInUSD.toFixed(
+            4
+          )} USD    \n ${allfees.totalCostInINR.toFixed(
+            4
+          )} INR         ${allfees.gasCostInEther.toFixed(4)} ETH `,
+          {
+            theme: "dark",
+            position: "top-right",
+            autoClose: 10000,
+
+            closeOnClick: true,
+            draggable: true,
+          }
+        );
       } catch (error) {
         console.error("Error calling contract.giveAccess:", error);
       }
@@ -124,15 +237,14 @@ export default function Display({ account, myaddress, contract }) {
 
   async function handleaccessList(url) {
     var list = await contract.getAccesList(url);
-    console.log(url);
+    // console.log(list);
 
     const accessListRows = list.map((item, index) => {
+      console.log(item);
       return (
         <tr key={index}>
-          <td>{index + 1}</td> {/* Row number */}
-          <td>{item[0]}</td>{" "}
-          {/* Adjust this based on the properties of your access list item */}
-          {/* Add more <td> elements for other properties of the item if needed */}
+          <td>{index + 1}</td>
+          <td>{item[0]}</td>
         </tr>
       );
     });
@@ -141,9 +253,8 @@ export default function Display({ account, myaddress, contract }) {
       <table className="table table-dark table-hover mt-4 table-striped">
         <thead>
           <tr>
-            {/* <th scope="col">#</th>
-            <th scope="col">Access Details</th> */}
-            {/* Add more <th> elements for other properties if needed */}
+            <th scope="col">#</th>
+            <th scope="col">Account Numbers</th>
           </tr>
         </thead>
         <tbody>{accessListRows}</tbody>
@@ -152,29 +263,48 @@ export default function Display({ account, myaddress, contract }) {
 
     setAccessList(table);
     setShow(true);
+    if (list === undefined || list.length == 0) {
+      setAccessList(
+        <div>
+          <h2>No Access List Founded.</h2>
+        </div>
+      );
+    }
     <Modal
-    data-bs-theme="dark"
-    show = {show} onHide = {handleClose} animation={false}>
-     <Modal.Header closeButton>
-       <Modal.Title>Access List</Modal.Title>
-     </Modal.Header>
-     <Modal.Body>
-       {accessList}
-     </Modal.Body>
-     <Modal.Footer>
-       <button onClick={handleClose}>Close</button>
-     </Modal.Footer>
-   </Modal>
-
+      data-bs-theme="dark"
+      show={show}
+      onHide={handleClose}
+      animation={false}
+    >
+      <Modal.Header closeButton>
+        <Modal.Title>Access List</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>{accessList}</Modal.Body>
+      <Modal.Footer>
+        <button onClick={handleClose}>Close</button>
+      </Modal.Footer>
+    </Modal>;
   }
 
   const myFunc = (address) => {
+    if (address === "") {
+      toast.error("Please Enter Address", {
+        theme: "dark",
+      });
+      return;
+    }
+
     console.log(address);
     handleGiveAccess(address, dataItem);
   };
 
   const myFunc2 = (address) => {
-    console.log(address);
+    if (address === "") {
+      toast.error("Please Enter Address", {
+        theme: "dark",
+      });
+      return;
+    }
     setAccessList([]);
     handleRemoveAccess(address, dataItem);
   };
@@ -183,52 +313,60 @@ export default function Display({ account, myaddress, contract }) {
     let transaction = await contract.getTransactions();
 
     // Check the structure of the transaction data
-    console.log(transaction); // Log the transaction to see its structure
-
-    // Convert to a mutable array if necessary
     const mutableTransactions = Array.from(transaction); // or use [...transaction]
 
-    // Reverse the order of the transaction array
-    const transact = mutableTransactions.reverse().map((item, index) => {
-      return (
-        <tr key={index}>
-          <td>{mutableTransactions.length - index}</td>{" "}
-          {/* Row number in reverse order */}
-          <td>{item[0]}</td>{" "}
-          {/* Adjust this based on the properties of your transaction */}
-          {/* Add more <td> elements for other properties of the transaction if needed */}
-        </tr>
+    // console.log(mutableTransactions); // Log the transaction to see its structure
+    // Convert to a mutable array if necessary
+    if (mutableTransactions === undefined || mutableTransactions.length == 0) {
+      setTransactData(
+        <div>
+          <h2>No Transactions Founded.</h2>
+        </div>
       );
-    });
-
-    const table = (
-      <table className="table table-dark mt-4 table-striped">
-        <thead>
-          <tr>
-            {/* <th scope="col">#</th>
-            <th scope="col">Transaction Details</th> */}
-            {/* Add more <th> elements for other properties */}
+    } else {
+      // Reverse the order of the transaction array
+      const transact = mutableTransactions.reverse().map((item, index) => {
+        console.log(item);
+        return (
+          <tr key={index}>
+            <td>{mutableTransactions.length - index}</td> <td>{item[0]}</td>
+            <td>{item[1]}</td>
           </tr>
-        </thead>
-        <tbody>{transact}</tbody>
-      </table>
-    );
+        );
+      });
 
-    setTransactData(table);
+      const table = (
+        <table className="table table-dark mt-4 table-striped">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Transaction Details</th>
+              <th scope="col">Timestamp</th>
+            </tr>
+          </thead>
+          <tbody>{transact}</tbody>
+        </table>
+      );
+
+      setTransactData(table);
+    }
     setShowtransModal(true);
     <Modal
-     data-bs-theme="dark"
-     show = {showtransModal} onHide = {handletransClose} animation={false}>
+      size="lg"
+      data-bs-theme="dark"
+      show={showtransModal}
+      onHide={handletransClose}
+      // backdrop="static"
+      animation={false}
+    >
       <Modal.Header closeButton>
         <Modal.Title>Transactions Details</Modal.Title>
       </Modal.Header>
-      <Modal.Body>
-        {transactData}  
-      </Modal.Body>
+      <Modal.Body>{transactData}</Modal.Body>
       <Modal.Footer>
-       <button onClick={handletransClose}>Close</button>
-     </Modal.Footer>
-    </Modal>
+        <button onClick={handletransClose}>Close</button>
+      </Modal.Footer>
+    </Modal>;
   }
 
   const handleDownload = async (url, filename) => {
@@ -275,18 +413,46 @@ export default function Display({ account, myaddress, contract }) {
     const otherAddress = document.getElementsByName("addresses")[0].value;
     if (otherAddress) {
       let s1 = myaddress + " have acessed file at " + humanReadableDate;
+
       dataArray = await contract.sharedFiles(otherAddress);
       console.log(dataArray);
       const isEmpty = Object.keys(dataArray).length === 0;
       if (isEmpty) {
+        setData(
+          <div>
+            <h1>No Files Founded.</h1>
+          </div>
+        );
       } else {
+        const resp = await contract.SharedTransaction(
+          otherAddress,
+          myaddress + " have accesed your shared files .",
+          humanReadableDate
+        );
+        const allfees = await calculateTransactionCost(resp);
+        toast.info(
+          `Transaction Cost: \n ${allfees.totalCostInUSD.toFixed(
+            4
+          )} USD    \n ${allfees.totalCostInINR.toFixed(
+            4
+          )} INR         ${allfees.gasCostInEther.toFixed(4)} ETH `,
+          {
+            theme: "dark",
+            position: "top-right",
+            autoClose: 10000,
+
+            closeOnClick: true,
+            draggable: true,
+          }
+        );
         const imgs = dataArray.map((data, index) => {
+          console.log(data);
           return (
             <tr key={index}>
               <th scope="row">{index + 1}</th>
               <td>{data.name}</td>
               <td>{data.size}</td> {/* Display size in MB */}
-              <td>{new Date(data.timeStamp).toLocaleString()}</td>{" "}
+              <td>{new Date(data.timeStamp).toLocaleString()}</td>
               {/* Convert timestamp */}
               <td>
                 <button
@@ -329,6 +495,11 @@ export default function Display({ account, myaddress, contract }) {
       console.log(dataArray);
       const isEmpty = Object.keys(dataArray).length === 0;
       if (isEmpty) {
+        setData(
+          <div>
+            <h1>No Files Founded.</h1>
+          </div>
+        );
       } else {
         const imgs = dataArray.map((data, index) => {
           return (
@@ -336,7 +507,7 @@ export default function Display({ account, myaddress, contract }) {
               <th scope="row">{index + 1}</th>
               <td>{data.name}</td>
               <td>{data.size}</td> {/* Display size in MB */}
-              <td>{new Date(data.timeStamp).toLocaleString()}</td>{" "}
+              <td>{new Date(data.timeStamp).toLocaleString()}</td>
               {/* Convert timestamp */}
               <td>
                 <button
@@ -353,7 +524,7 @@ export default function Display({ account, myaddress, contract }) {
               </td>
               <td>
                 <button
-                  className="btn_small1"
+                  className="but5"
                   onClick={() => giveacces(data, addressaccess)}
                 >
                   Give Access
@@ -361,7 +532,7 @@ export default function Display({ account, myaddress, contract }) {
               </td>
               <td>
                 <button
-                  className="btn_small1"
+                  className="but6"
                   onClick={() => removeAccess(data, addressaccess)}
                 >
                   Remove Access
@@ -373,6 +544,14 @@ export default function Display({ account, myaddress, contract }) {
                   onClick={() => handleaccessList(data.url)}
                 >
                   GetAccessList
+                </button>
+              </td>
+              <td>
+                <button
+                  className="btn_small1"
+                  onClick={() => handleUnpin(data.url, data.name)}
+                >
+                  Remove File
                 </button>
               </td>
             </tr>
@@ -391,6 +570,7 @@ export default function Display({ account, myaddress, contract }) {
                 <th scope="col">Give Access</th>
                 <th scope="col">Remove Access</th>
                 <th scope="col">Access List</th>
+                <th scope="col">Remove File</th>
               </tr>
             </thead>
             <tbody>{imgs}</tbody>
@@ -405,14 +585,14 @@ export default function Display({ account, myaddress, contract }) {
     <div className="displayImgdiv">
       {/* <h1>IMAGES DATA</h1> */}
       <div className="acc">
-      <p className="heading">Recipient&apos;s Key :</p>
-      <input
-        name="addresses"
-        type="text"
-        placeholder="Enter adderess"
-      ></input>
+        <p className="heading">Recipient&apos;s Key :</p>
+        <input
+          name="addresses"
+          type="text"
+          placeholder="Enter adderess"
+        ></input>
       </div>
-    
+
       <button onClick={getdata} className="whiteBtn">
         List All Files
       </button>
@@ -423,83 +603,110 @@ export default function Display({ account, myaddress, contract }) {
         Get Transactions
       </button>
       <Modal
-     data-bs-theme="dark"
-     show = {showtransModal} onHide = {handletransClose} animation={false}>
-      <Modal.Header closeButton>
-        <Modal.Title>Transactions Details</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        {transactData}
-        {/* <h2>Transactions</h2> */}
-      </Modal.Body>
-      <Modal.Footer>
-       <button onClick={handletransClose}>Close</button>
-     </Modal.Footer>
-    </Modal>
+        data-bs-theme="dark"
+        show={showtransModal}
+        onHide={handletransClose}
+        animation={false}
+        size="xl"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Transactions Details</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {transactData}
+          {/* <h2>Transactions</h2> */}
+        </Modal.Body>
+        <Modal.Footer>
+          <button onClick={handletransClose}>Close</button>
+        </Modal.Footer>
+      </Modal>
       {/* <div className="transactionDiv">{transactData}</div> */}
       <div className="acc">
         <p className="heading">Sender&apos; Key:</p>
         <input
-        type="text"
-        onChange={(e) => {
-          setAddressAccess(e.target.value);
-          console.log(addressaccess);
-        }}
-        placeholder="Give / Remove Access"
-      />
+          type="text"
+          onChange={(e) => {
+            setAddressAccess(e.target.value);
+            console.log(addressaccess);
+          }}
+          placeholder="Give / Remove Access"
+        />
       </div>
       <div className="but-give-revoke">
-      <button className="but5" onClick={() => myFunc(addressaccess)}>
-        Confirm GIVE Access
-      </button>
-      <button className="but6" onClick={() => myFunc2(addressaccess)}>
-        Confirm REMOVE Access
-      </button>
+        <button className="but5" onClick={() => myFunc(addressaccess)}>
+          Confirm GIVE Access
+        </button>
+        <button className="but6" onClick={() => myFunc2(addressaccess)}>
+          Confirm REMOVE Access
+        </button>
       </div>
       {/* <h1 className="acc">AccessList</h1>
       <Button variant = "primary" onClick={handleShow} >Get Access List</Button> */}
       <Modal
-       data-bs-theme="dark"
-       show = {show} onHide = {handleClose} animation={false}>
+        data-bs-theme="dark"
+        show={show}
+        onHide={handleClose}
+        animation={false}
+      >
         <Modal.Header closeButton>
           <Modal.Title>Access List</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          {accessList}
-        </Modal.Body>
+        <Modal.Body>{accessList}</Modal.Body>
         <Modal.Footer>
           <button onClick={handleClose}>Close</button>
         </Modal.Footer>
       </Modal>
       {/* <div>{accessList}</div> */}
 
-      <Modal
-        data-bs-theme="dark"
-       show = {accessModal} onHide = {HandleCloseAccess}>
+      <Modal data-bs-theme="dark" show={accessModal} onHide={HandleCloseAccess}>
         <Modal.Header>
           <Modal.Title>Confirming To Give Access</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-            <p>Are You sure you want to give Access ?</p>
+          <p>
+            Are You sure you want to give Access of{" "}
+            {dataItem ? dataItem.name : ""} ?
+          </p>
         </Modal.Body>
         <Modal.Footer>
-        <button onClick = {() => myFunc(addressaccess)}>Yes</button>
-        <button onClick = {HandleCloseAccess}>No</button>
+          <button onClick={() => myFunc(addressaccess)}>Yes</button>
+          <button onClick={HandleCloseAccess}>No</button>
         </Modal.Footer>
       </Modal>
 
       <Modal
         data-bs-theme="dark"
-       show = {removeAccessModal} onHide = {HandleCloseAccess}>
+        show={removeAccessModal}
+        onHide={HandleCloseAccess}
+      >
         <Modal.Header>
           <Modal.Title>Confirming To Remove Access</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-            <p>Are You sure you want to remove Access ?</p>
+          <p>
+            Are You sure you want to remove Access of
+            {dataItem ? dataItem.name : ""} ?
+          </p>
         </Modal.Body>
         <Modal.Footer>
-        <button onClick = {() => myFunc2(addressaccess)}>Yes</button>
-        <button onClick = {HandleCloseRemoveAccess}>No</button>
+          <button onClick={() => myFunc2(addressaccess)}>Yes</button>
+          <button onClick={HandleCloseRemoveAccess}>No</button>
+        </Modal.Footer>
+      </Modal>
+      <Modal
+        data-bs-theme="dark"
+        show={deletefileModal}
+        onHide={HandleCloseDeletefile}
+      >
+        <Modal.Header>
+          <Modal.Title>Confirming To Delete File ?</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Are You sure you want to delete file ?</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <button onClick={() => myFunc2(addressaccess)}>Yes</button>
+          <button onClick={HandleCloseRemoveAccess}>No</button>
         </Modal.Footer>
       </Modal>
     </div>

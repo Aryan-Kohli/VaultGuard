@@ -6,8 +6,8 @@ import Display from "./components/Display";
 import Modal from "./components/Modal";
 import "./GetStarted.css";
 import logo from "./assets/g1.png";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Instructions from "./components/Instructions";
 
 function GetStarted() {
@@ -68,7 +68,11 @@ function GetStarted() {
         <Instructions />
         <div className="acc">
           <p className="heading">Account Number: </p>
-          <input type="text" value={account ? account : "NOT CONNECTED"} />
+          <input
+            type="text"
+            value={account ? account : "NOT CONNECTED"}
+            readOnly={true}
+          />
           {/* <h1 className="accountNum">{account ? account : "NOT CONNECTED"}</h1> */}
         </div>
         <FileUpload
