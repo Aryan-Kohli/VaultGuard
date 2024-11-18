@@ -1,6 +1,9 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import "./Display.css";
+import "./PDFButton.css";
+import "./Modal.css";
+import "./table.css";
 import { MdDocumentScanner } from "react-icons/md";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -8,6 +11,9 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import { ethers } from "ethers";
 import calculateTransactionCost from "./feesCalculator";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import TransactionsPdf from "./TransactionsPdf";
+import { FaFilePdf } from "react-icons/fa";
 export default function Display({ account, myaddress, contract }) {
   const [data, setData] = useState([]);
   const [transactData, setTransactData] = useState([]);
@@ -21,6 +27,7 @@ export default function Display({ account, myaddress, contract }) {
   const [accessModal, setAccessModal] = useState(false);
   const [removeAccessModal, setRemoveAccessModal] = useState(false);
   const [deletefileModal, setDeletefileModal] = useState(false);
+  const [mutableTransactions, setMutableTransactions] = useState([]);
 
   const HandleCloseAccess = () => setAccessModal(false);
   const HandleCloseRemoveAccess = () => setRemoveAccessModal(false);
@@ -250,7 +257,7 @@ export default function Display({ account, myaddress, contract }) {
     });
 
     const table = (
-      <table className="table table-dark table-hover mt-4 table-striped">
+      <table className="table table-dark table-hover mt-4 ">
         <thead>
           <tr>
             <th scope="col">#</th>
@@ -266,7 +273,7 @@ export default function Display({ account, myaddress, contract }) {
     if (list === undefined || list.length == 0) {
       setAccessList(
         <div>
-          <h2>No Access List Founded.</h2>
+          <p>No Access List Founded.</p>
         </div>
       );
     }
@@ -317,16 +324,17 @@ export default function Display({ account, myaddress, contract }) {
 
     // console.log(mutableTransactions); // Log the transaction to see its structure
     // Convert to a mutable array if necessary
+    setMutableTransactions(mutableTransactions);
     if (mutableTransactions === undefined || mutableTransactions.length == 0) {
       setTransactData(
         <div>
-          <h2>No Transactions Founded.</h2>
+          <p>No Transactions Founded.</p>
         </div>
       );
     } else {
       // Reverse the order of the transaction array
       const transact = mutableTransactions.reverse().map((item, index) => {
-        console.log(item);
+        // console.log(item);
         return (
           <tr key={index}>
             <td>{mutableTransactions.length - index}</td> <td>{item[0]}</td>
@@ -336,7 +344,7 @@ export default function Display({ account, myaddress, contract }) {
       });
 
       const table = (
-        <table className="table table-dark mt-4 table-striped">
+        <table className="table table-dark mt-4">
           <thead>
             <tr>
               <th scope="col">#</th>
@@ -351,22 +359,6 @@ export default function Display({ account, myaddress, contract }) {
       setTransactData(table);
     }
     setShowtransModal(true);
-    <Modal
-      size="lg"
-      data-bs-theme="dark"
-      show={showtransModal}
-      onHide={handletransClose}
-      // backdrop="static"
-      animation={false}
-    >
-      <Modal.Header closeButton>
-        <Modal.Title>Transactions Details</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>{transactData}</Modal.Body>
-      <Modal.Footer>
-        <button onClick={handletransClose}>Close</button>
-      </Modal.Footer>
-    </Modal>;
   }
 
   const handleDownload = async (url, filename) => {
@@ -559,7 +551,7 @@ export default function Display({ account, myaddress, contract }) {
         });
 
         const table = (
-          <table className="table mt-4 table-hover table-dark ">
+          <table className="table mt-4 table-dark ">
             <thead>
               <tr>
                 <th scope="col">#</th>
@@ -610,7 +602,24 @@ export default function Display({ account, myaddress, contract }) {
         size="xl"
       >
         <Modal.Header closeButton>
-          <Modal.Title>Transactions Details</Modal.Title>
+          <Modal.Title>
+            Transactions Details
+            {mutableTransactions && (
+              <PDFDownloadLink
+                document={
+                  <TransactionsPdf
+                    transactions={mutableTransactions}
+                    myaddress={myaddress}
+                  />
+                }
+                fileName={"Transactions.pdf"}
+                className="pdf-download-button"
+              >
+                <FaFilePdf className="pdf-icon" />
+                DOWNLOAD PDF
+              </PDFDownloadLink>
+            )}
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {transactData}

@@ -1,0 +1,7 @@
+.table-dark{
+    --bs-table-bg: #06060c;
+    --bs-table-color: #d8b4e7;
+}
+.table-dark thead{
+    --bs-table-color: #d4ed8f;
+}
