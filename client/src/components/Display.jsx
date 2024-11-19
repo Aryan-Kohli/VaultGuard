@@ -62,6 +62,20 @@ export default function Display({ account, myaddress, contract }) {
   // const closeModal = () => {
   //   setModalIsOpen(false);
   // };
+  function removeFile(data) {
+    console.log(data);
+    Setdataitem(data);
+    setDeletefileModal(true);
+
+  }
+
+  const myFunc3 = () => {
+      console.log(dataItem.url,dataItem.name);
+      handleUnpin(dataItem.url, dataItem.name);
+  }
+
+
+
   async function handleUnpin(cid, name) {
     let resp = "";
     try {
@@ -77,7 +91,8 @@ export default function Display({ account, myaddress, contract }) {
       console.log("Error deleting file:", error);
       return;
     }
-
+    
+    setDeletefileModal(false);
     const toastId = toast.loading("Unpinning file...", {
       theme: "dark",
       position: "top-right",
@@ -118,6 +133,7 @@ export default function Display({ account, myaddress, contract }) {
             draggable: true,
           }
         );
+        
       } else {
         const errorData = await res.json();
         throw new Error(errorData.error || "Failed to unpin the file.");
@@ -541,7 +557,8 @@ export default function Display({ account, myaddress, contract }) {
               <td>
                 <button
                   className="btn_small1"
-                  onClick={() => handleUnpin(data.url, data.name)}
+                  // onClick={() => handleUnpin(data.url, data.name)}
+                  onClick={() => removeFile(data)}
                 >
                   Remove File
                 </button>
@@ -714,8 +731,8 @@ export default function Display({ account, myaddress, contract }) {
           <p>Are You sure you want to delete file ?</p>
         </Modal.Body>
         <Modal.Footer>
-          <button onClick={() => myFunc2(addressaccess)}>Yes</button>
-          <button onClick={HandleCloseRemoveAccess}>No</button>
+          <button onClick={myFunc3}>Yes</button>
+          <button onClick={HandleCloseDeletefile}>No</button>
         </Modal.Footer>
       </Modal>
     </div>

@@ -13,8 +13,29 @@ body{
         font-style: normal;
 }
 .maintitleContainer{
-    text-align: center;
+    /* text-align: center; */
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    position: relative;
 
+}
+
+
+.back-to-home {
+    /* padding-left: 20px; */
+    /* margin-right: 40px; */
+    position: absolute; 
+    top: 20px; 
+    left: 20px; 
+    font-size: 16px;
+    padding-top: 30px;
+    font-size: 18px;
+    color: rgb(81, 81, 224);
+    text-decoration: none;
+}
+.back-to-home:hover {
+    color: white;
 }
 .accountheadContainer{
     text-align: center;
@@ -22,6 +43,9 @@ body{
     justify-content: center;
     align-items: center;
 }
+
+
+
 .accounthead{
     font-size: 2.6rem;
         font-family: "Sedan", serif;

@@ -1,5 +1,6 @@
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import { IoMdInformationCircleOutline } from "react-icons/io";
 import { useState } from 'react';
 import "./Instructions.css";
 
@@ -15,7 +16,7 @@ const Instructions = () => {
     return (
         <div>
             <button className='float-btn' onClick={handleInstructShow}>
-                Get Instructions
+                <IoMdInformationCircleOutline size={40} />
             </button>
         <Modal
          data-bs-theme="dark"

@@ -9,8 +9,10 @@ import logo from "./assets/g1.png";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Instructions from "./components/Instructions";
+import { Link, useNavigate } from "react-router-dom";
 
 function GetStarted() {
+  const navigate = useNavigate();
   const [account, setAccount] = useState("");
   const [contract, setContract] = useState(null);
   const [provider, setProvider] = useState(null);
@@ -62,6 +64,7 @@ function GetStarted() {
       <div className="App">
         <ToastContainer />
         <div className="maintitleContainer">
+          <Link className="back-to-home" to = "/">&lt;&lt;Back to Home</Link>
           {/* <h1 className="maintitle">Vault Guard</h1> */}
           <img src={logo} className="lg"></img>
         </div>
