@@ -14,6 +14,8 @@ import calculateTransactionCost from "./feesCalculator";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import TransactionsPdf from "./TransactionsPdf";
 import { FaFilePdf } from "react-icons/fa";
+import { decryptFile } from "./security";
+
 export default function Display({ account, myaddress, contract }) {
   const [data, setData] = useState([]);
   const [transactData, setTransactData] = useState([]);
@@ -66,15 +68,12 @@ export default function Display({ account, myaddress, contract }) {
     console.log(data);
     Setdataitem(data);
     setDeletefileModal(true);
-
   }
 
   const myFunc3 = () => {
-      console.log(dataItem.url,dataItem.name);
-      handleUnpin(dataItem.url, dataItem.name);
-  }
-
-
+    console.log(dataItem.url, dataItem.name);
+    handleUnpin(dataItem.url, dataItem.name);
+  };
 
   async function handleUnpin(cid, name) {
     let resp = "";
@@ -91,7 +90,7 @@ export default function Display({ account, myaddress, contract }) {
       console.log("Error deleting file:", error);
       return;
     }
-    
+
     setDeletefileModal(false);
     const toastId = toast.loading("Unpinning file...", {
       theme: "dark",
@@ -133,7 +132,6 @@ export default function Display({ account, myaddress, contract }) {
             draggable: true,
           }
         );
-        
       } else {
         const errorData = await res.json();
         throw new Error(errorData.error || "Failed to unpin the file.");
@@ -379,43 +377,41 @@ export default function Display({ account, myaddress, contract }) {
 
   const handleDownload = async (url, filename) => {
     try {
+      // Fetch the encrypted file from IPFS
+      const decryptionKey = "mySecretKey";
       const response = await fetch(url);
-      console.log(response);
-      // Check if the response is okay
-      // if (!response.ok) {
-      //   throw new Error(`Failed to download file: ${response.statusText}`);
-      // }
+      const encryptedData = await response.text(); // Fetch encrypted content
 
-      const blob = await response.blob();
-      const link = document.createElement("a");
-      const blobUrl = URL.createObjectURL(blob);
+      // Decrypt the file content
+      const decryptedContent = decryptFile(encryptedData, decryptionKey);
+      const fileExtension = filename.split(".").pop(); // Get the file extension
 
-      // Automatically set the filename if it's not provided
-      const contentDisposition = response.headers.get("content-disposition");
-      if (
-        !filename &&
-        contentDisposition &&
-        contentDisposition.includes("filename=")
-      ) {
-        filename = contentDisposition
-          .split("filename=")[1]
-          .split(";")[0]
-          .replace(/['"]/g, "");
+      if (!decryptedContent) {
+        throw new Error("Decryption failed");
       }
 
-      // Default to a generic filename if none is provided
-      filename = filename || "downloaded_file";
+      // Create a Blob from the decrypted content
+      const blob = new Blob([decryptedContent], {
+        type: "application/octet-stream",
+      });
 
+      // Set the filename with the correct extension
+      filename = filename || `decrypted_file.${fileExtension}`;
+
+      // Create a download link for the decrypted file
+      const link = document.createElement("a");
+      const blobUrl = URL.createObjectURL(blob);
       link.href = blobUrl;
       link.setAttribute("download", filename);
       document.body.appendChild(link);
       link.click();
       link.remove();
-      URL.revokeObjectURL(blobUrl); // Clean up
+      URL.revokeObjectURL(blobUrl); // Clean up the URL object
     } catch (error) {
-      console.error("Download failed:", error);
+      console.error("Download or decryption failed:", error);
     }
   };
+
   async function getdata() {
     let dataArray;
     const otherAddress = document.getElementsByName("addresses")[0].value;
