@@ -4,7 +4,7 @@ import { toast, ToastContainer } from "react-toastify";
 import { MdFamilyRestroom } from "react-icons/md";
 import "react-toastify/dist/ReactToastify.css";
 import calculateTransactionCost from "./feesCalculator";
-
+import { encryptFile } from "./security";
 export default function FileUpload({ account, contract, provider }) {
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState("No file chosen");
@@ -54,10 +54,20 @@ export default function FileUpload({ account, contract, provider }) {
     let fileHash = null;
     let toastId = null;
     try {
+      const encryptionKey = "mySecretKey";
+      const encryptedFileContent = await encryptFile(file, encryptionKey);
+      const fileExtension = fileName.split(".").pop(); // Get the file extension
+
       const formData = new FormData();
-      formData.append("file", file);
+      const encryptedBlob = new Blob([encryptedFileContent], {
+        type: "application/octet-stream",
+      });
+
+      formData.append("file", encryptedBlob, `${file.name}.encrypted`);
+
       const metadata = JSON.stringify({
-        name: "File name",
+        name: `${fileName}`,
+        fileExtension: fileExtension,
       });
       formData.append("pinataMetadata", metadata);
 
